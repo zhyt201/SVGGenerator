@@ -1,0 +1,23 @@
+{
+  "name": "chartgenerator",
+  "version": "1.0.0",
+  "description": "A npm module could be used to generate chart graph",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "svg",
+    "chart",
+    "nodejs",
+    "generator"
+  ],
+  "author": "Yuntao Zhou <zhyt201@163.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "d3": "^3.5.16",
+    "jquery": "^2.2.2",
+    "jsdom": "^3.1.2",
+    "lodash": "^4.6.1"
+  }
+}
