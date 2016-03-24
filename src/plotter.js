@@ -81,12 +81,10 @@ module.exports = function (container, opt) {
 			show : true,
 			xStyle : {
 				'stroke' : '#d3d3d3',
-				'shape-rendering' : 'crispEdges',
 				'stroke-dasharray' : '1 3'
 			},
 			yStyle : {
 				'stroke' : '#d3d3d3',
-				'shape-rendering' : 'crispEdges',
 				'stroke-dasharray' : '1 3'
 			}
 		},

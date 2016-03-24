@@ -11,8 +11,8 @@ var seriesList = [{
 	//'color': getColor(i, data[i].tickerObject),
 }];
 var html = plotter(container,{
-	width:1240,
-	height:587
+	width:800,
+	height:600
 }).init(seriesList).output();
 //console.log(html);
 fs.writeFileSync('./output.svg','<?xml version="1.0"?>' + html);
