@@ -98,8 +98,19 @@ module.exports = function (container, opt) {
 			},
 			traceMouse : false
 		},
-		line : {},
-		area : {},
+		line : {
+			style : {
+				'fill' : 'none',
+				'stroke' : '#0039b7',
+				'stroke-width' : '2px'
+			}
+		},
+		area : {
+			style : {
+				'fill' : '#0039b7',
+				'fill-opacity' : '.4'
+			}
+		},
 		mountain : {},
 		bar : {
 			width : 'auto' // it could be number or auto, auto means it is calculated.
@@ -114,6 +125,16 @@ module.exports = function (container, opt) {
 			width : 'auto'
 		},
 		abovebelow : {
+			aStyle : {
+				'fill' : '#92BC65',
+				'opacity' : '.8',
+				'stroke' : '#65A125'
+			},
+			bStyle : {
+				'fill' : '#D86D72',
+				'opacity' : '.8',
+				'stroke' : '#CA3239'
+			},
 			referValue : function (d) {
 				return d.close;
 			}
@@ -131,7 +152,8 @@ module.exports = function (container, opt) {
 	//var $container;
 
 	//normal object
-	var _width,
+	var _random = new Date().getTime(),
+	_width,
 	_height,
 	_seriesList = [],
 	_seriesCache = {
@@ -594,7 +616,7 @@ module.exports = function (container, opt) {
 			})
 			.defined(option.line.invalid || option.invalid);
 
-		var lineseries = _graph.append('g').attr('class', 'mstar-mkts-ui-plot-line-series').style(series.linestyle);
+		var lineseries = _graph.append('g').attr('class', 'mstar-mkts-ui-plot-line-series').style(series.linestyle || option.line.style);
 		lineseries.append('path').attr('d', line(series.data));
 
 		return lineseries;
@@ -611,8 +633,8 @@ module.exports = function (container, opt) {
 			})
 			.defined(option.area.invalid || option.invalid);
 
-		var target = _graph.append('g').attr('class', 'mstar-mkts-ui-plot-area-series');
-		var clipId = series.clipId || location.host + '#clip';
+		var target = _graph.append('g').attr('class', 'mstar-mkts-ui-plot-area-series').style(series.areastyle || option.area.style);
+		var clipId = series.clipId || _random + '#clip';
 
 		createClipPath(target, clipId);
 
@@ -715,16 +737,15 @@ module.exports = function (container, opt) {
 
 	var drawAboveBelow = function (series) {
 		var referValue = option.abovebelow.referValue(series.data[0]);
+		var yClipValue = _yScale(referValue);
 		var clipArea = d3.svg.area()
 			.x(function (d) {
 				return _xScale(xValue(d));
 			})
-			.y1(function (d) {
-				return _yScale(referValue);
-			})
+			.y1(yClipValue)
 			.defined(option.abovebelow.invalid || option.invalid);
 
-		var area = d3.svg.area()
+		var abArea = d3.svg.area()
 			.x(function (d) {
 				return _xScale(xValue(d));
 			})
@@ -734,28 +755,49 @@ module.exports = function (container, opt) {
 			.defined(option.abovebelow.invalid || option.invalid);
 
 		var target = _graph.append('g').attr('class', 'mstar-mkts-ui-plot-abovebelow-series');
-		var aboveClipId = series.aboveClipId || location.host + '#clip-above';
-		var belowClipId = series.belowClipId || location.host + '#clip-below';
+		var aboveClipId = series.aboveClipId || _random + '-clip-above';
+		var belowClipId = series.belowClipId || _random + '-clip-below';
 
 		target.datum(series.data);
 
-		target.append("clipPath")
+		/*target.append("clipPath")
 		.attr("id", aboveClipId)
 		.append("path")
-		.attr("d", clipArea.y0(0));
+		.attr("d", clipArea.y0(0));*/
+		
+		target.append('clipPath')
+		.attr('id', aboveClipId)
+		.append('rect')
+		.attr('x', 0)
+		.attr('y', 0)
+		.attr('width', _width)
+		.attr('height', yClipValue);
+		
+		
 		target.append('path')
+		.style(series.aboveStyle || option.abovebelow.aStyle)
 		.attr('class', 'mstar-mkts-ui-plot-above-series')
 		.attr("clip-path", "url(#" + aboveClipId + ")")
-		.attr("d", area.y0(_height));
+		.attr("d", abArea.y0(_height));
 
-		target.append("clipPath")
+		/*target.append("clipPath")
 		.attr("id", belowClipId)
 		.append("path")
-		.attr("d", clipArea.y0(_height));
+		.attr("d", clipArea.y0(_height));*/
+		
+		target.append('clipPath')
+		.attr('id', belowClipId)
+		.append('rect')
+		.attr('x', 0)
+		.attr('y', yClipValue)
+		.attr('width', _width)
+		.attr('height', _height-yClipValue);
+		
 		target.append('path')
+		.style(series.belowStyle || option.abovebelow.bStyle)
 		.attr('class', 'mstar-mkts-ui-plot-below-series')
 		.attr("clip-path", "url(#" + belowClipId + ")")
-		.attr("d", area.y0(0));
+		.attr("d", abArea.y0(0));
 
 		return target;
 	};

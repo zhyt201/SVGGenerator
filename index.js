@@ -4,20 +4,15 @@ var fs=require('fs');
 var data=JSON.parse(fs.readFileSync('./IBM_1D.json'));
 var seriesList = [{
 	'data': data.Price.data,
-	'graphType': 'line',
+	'graphType': 'abovebelow',
 	'tickerObject': data.tickerObject,
 	'spos': data.Price.spos,
-	'epos': data.Price.epos,
+	'epos': data.Price.epos
 	//'color': getColor(i, data[i].tickerObject),
-	'linestyle': {
-		'fill': 'none',
-        'stroke': '#339bb6',
-        'stroke-width': '2px',
-	}
 }];
 var html = plotter(container,{
-	width:800,
-	height:600
+	width:1240,
+	height:587
 }).init(seriesList).output();
 //console.log(html);
 fs.writeFileSync('./output.svg','<?xml version="1.0"?>' + html);
