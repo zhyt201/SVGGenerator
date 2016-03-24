@@ -196,7 +196,7 @@ module.exports = function (container, opt) {
 	};
 
 	plotter.output = function () {
-		return _container.html();
+		return _container.html().replace(/clippath/g, 'clipPath');
 	};
 
 	var construct = function () {
@@ -755,44 +755,35 @@ module.exports = function (container, opt) {
 			.defined(option.abovebelow.invalid || option.invalid);
 
 		var target = _graph.append('g').attr('class', 'mstar-mkts-ui-plot-abovebelow-series');
-		var aboveClipId = series.aboveClipId || _random + '-clip-above';
-		var belowClipId = series.belowClipId || _random + '-clip-below';
+		var aboveClipId = series.aboveClipId || 'clip-above-' + _random;
+		var belowClipId = series.belowClipId || 'clip-below-' + _random;
 
 		target.datum(series.data);
 
-		/*target.append("clipPath")
-		.attr("id", aboveClipId)
-		.append("path")
-		.attr("d", clipArea.y0(0));*/
-		
-		target.append('clipPath')
+		var defs = target.append('defs');
+
+		defs.append('clipPath')
 		.attr('id', aboveClipId)
 		.append('rect')
 		.attr('x', 0)
 		.attr('y', 0)
 		.attr('width', _width)
 		.attr('height', yClipValue);
-		
-		
+
+		defs.append('clipPath')
+		.attr('id', belowClipId)
+		.append('rect')
+		.attr('x', 0)
+		.attr('y', yClipValue)
+		.attr('width', _width)
+		.attr('height', _height - yClipValue);
+
 		target.append('path')
 		.style(series.aboveStyle || option.abovebelow.aStyle)
 		.attr('class', 'mstar-mkts-ui-plot-above-series')
 		.attr("clip-path", "url(#" + aboveClipId + ")")
 		.attr("d", abArea.y0(_height));
 
-		/*target.append("clipPath")
-		.attr("id", belowClipId)
-		.append("path")
-		.attr("d", clipArea.y0(_height));*/
-		
-		target.append('clipPath')
-		.attr('id', belowClipId)
-		.append('rect')
-		.attr('x', 0)
-		.attr('y', yClipValue)
-		.attr('width', _width)
-		.attr('height', _height-yClipValue);
-		
 		target.append('path')
 		.style(series.belowStyle || option.abovebelow.bStyle)
 		.attr('class', 'mstar-mkts-ui-plot-below-series')
