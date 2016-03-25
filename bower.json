@@ -1,0 +1,23 @@
+{
+  "name": "SVGGenerator",
+  "main": "build/svg-generator.js",
+  "version": "1.0.0",
+  "homepage": "https://github.com/zhyt201/SVGGenerator",
+  "authors": [
+    "Yuntao Zhou <zhyt201@163.com>"
+  ],
+  "description": "A module could be used to generate chart graph",
+  "moduleType": [],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "d3": "~3.5.16",
+    "lodash": "~4.6.1"
+  }
+}
