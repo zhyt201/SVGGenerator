@@ -1,5 +1,5 @@
 var container = require("jsdom").jsdom().body;
-var plotter = require('../../src/plotter');
+var svggenerator = require('../../src/index').svggenerator;
 var fs = require('fs');
 var data = JSON.parse(fs.readFileSync('test/mock/MSFT_1D.json'));
 var seriesList = [{
@@ -11,7 +11,7 @@ var seriesList = [{
 		//'color': getColor(i, data[i].tickerObject),
 	}
 ];
-var html = plotter(container, {
+var html = svggenerator(container, {
 		width : 800,
 		height : 600
 	}).init(seriesList).output();

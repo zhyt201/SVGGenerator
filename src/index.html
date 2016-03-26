@@ -28,6 +28,24 @@
     <!--build:js js/svg-generator.js-->
     <script src="build/svg-generator.js"></script>
     <!--endbuild-->
+	<script>
+		function init(data){
+			var seriesList = [{
+					'data' : data.Price.data,
+					'graphType' : 'abovebelow',
+					'tickerObject' : data.tickerObject,
+					'spos' : data.Price.spos,
+					'epos' : data.Price.epos
+					//'color': getColor(i, data[i].tickerObject),
+				}
+			];
+			var html = svggenerator($('.container'), {
+				width : 800,
+				height : 600
+			}).init(seriesList);
+		};
+		$.getJSON('test/mock/MSFT_1D.json').done(init);
+	</script>
 </body>
 
 </html>

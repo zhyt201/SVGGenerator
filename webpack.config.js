@@ -13,6 +13,6 @@ module.exports = {
 	module : {},
 	externals : {
 		d3 : 'd3',
-		lodash : 'lodash'
+		lodash : '_'
 	}
 };

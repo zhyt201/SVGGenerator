@@ -47,29 +47,64 @@ function inject() {
 			starttag : '<!-- bower:js -->',
 			endtag : '<!-- endbower -->'
 		}))
-	.pipe(gulp.dest('.temp/'));
+	.pipe(gulp.dest('tmp/'));
 };
 
 gulp.task('clean', function () {
-	return gulp.src('build').pipe(plugins.clean({
-			force : true
+	return gulp.src(['build', 'tmp']).pipe(plugins.clean({
+			force : true,
+			read : false
 		}));
 });
 
 gulp.task('build', ['clean'], function () {
-	return gulp.src('src/js/plotter.js')
+	return gulp.src('src/index.js')
 	.pipe(plugins.webpack(require('./webpack.config.js')))
 	.pipe(gulp.dest('build/'))
 });
 
-gulp.task('preview', function () {
+gulp.task('copy', ['build'], function () {
+	return gulp.src(['./bower_components/**/*', './build/**/*', './test/mock/*'], {
+		base : '.'
+	})
+	.pipe(gulp.dest('tmp/'));
+});
+
+
+gulp.task('inject', ['copy'], function () {
 	if (!fs.existsSync('src/index.html')) {
 		var html = processTpl('indexPreview.snippet', {
 				name : 'svg-generator'
 			});
 		fs.writeFileSync('src/index.html', html);
 	}
-	gulp.src('src/index.html')
 
-	inject();
+	return inject();
 });
+
+gulp.task('open', ['connect'], function () {
+	return gulp.src(__filename)
+	.pipe(plugins.open({
+			uri : 'http://localhost:1234/index.html'
+		}));
+});
+
+gulp.task('connect', ['inject'], function (cb) {
+	plugins.connect.server({
+		root : 'tmp',
+		port : 1234,
+		livereload : true
+	});
+	cb();
+});
+
+gulp.task('reload', ['inject'], function () {
+	return gulp.src('tmp/**/*.*')
+	.pipe(plugins.connect.reload());
+});
+
+gulp.task('watch', function () {
+	gulp.watch('src/**/*.*', ['reload']);
+});
+
+gulp.task('preview', ['open', 'watch']);
