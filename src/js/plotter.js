@@ -75,7 +75,21 @@ module.exports = function (container, opt) {
 		},
 		highlight : {
 			show : true,
-			radius : 4
+			circle : {
+				radius : 4,
+				style : {
+					'fill' : 'none',
+					'opacity' : '0.8',
+					'stroke' : '#0039b7',
+					'stroke-width' : '2px'
+				}
+			},
+			rect : {
+				style : {
+					'stroke-width': '2px',
+					'stroke': '#000'
+				}
+			}
 		},
 		gridlines : {
 			show : true,
@@ -582,14 +596,19 @@ module.exports = function (container, opt) {
 
 	var drawHighlightCircle = function (index) {
 		if (_highlight) {
+			var color = getSeriesByIndex(index).color;
+			var extendStyle = {};
+			if (color) {
+				extendStyle['stroke'] = color;
+			}
+			var circleStyle = _.assignIn({}, option.highlight.circle.style, extendStyle);
 			var circle = _highlight.append("circle")
-				.attr('index', index)
+				.attr('data-index', index)
 				.attr('class', 'mstar-mkts-ui-plot-highlight mstar-mkts-ui-plot-circle mstar-mkts-ui-plot-series-' + index)
-				.attr('r', option.highlight.radius)
+				.attr('r', option.highlight.circle.radius)
 				.attr('display', 'none')
-				.style({
-					'stroke' : getSeriesByIndex(index).color
-				});
+				.style(circleStyle);
+
 			storeSeriesHighlight(index, {
 				'circle' : circle
 			});
@@ -860,7 +879,7 @@ module.exports = function (container, opt) {
 
 	var storeSeriesHighlight = function (index, highlight) {
 		_seriesCache.highlight[index] = _seriesCache.highlight[index] || {};
-		//$.extend(true, _seriesCache.highlight[index], highlight);
+		_.assignIn(_seriesCache.highlight[index], highlight);
 	};
 
 	var storeSeriesGraph = function (index, graph) {

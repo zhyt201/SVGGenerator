@@ -32,11 +32,11 @@
 		function init(data){
 			var seriesList = [{
 					'data' : data.Price.data,
-					'graphType' : 'abovebelow',
+					'graphType' : 'line',
 					'tickerObject' : data.tickerObject,
 					'spos' : data.Price.spos,
 					'epos' : data.Price.epos
-					//'color': getColor(i, data[i].tickerObject),
+					//'color': 'red',
 				}
 			];
 			var html = svggenerator($('.container'), {
