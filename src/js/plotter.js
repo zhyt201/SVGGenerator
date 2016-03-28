@@ -86,8 +86,8 @@ module.exports = function (container, opt) {
 			},
 			rect : {
 				style : {
-					'stroke-width': '2px',
-					'stroke': '#000'
+					'stroke-width' : '2px',
+					'stroke' : '#000'
 				}
 			}
 		},
@@ -128,24 +128,54 @@ module.exports = function (container, opt) {
 			width : 'auto' // it could be number or auto, auto means it is calculated.
 		},
 		dot : {
-			radius : 2
+			radius : 2,
+			style : {
+				'fill' : '#0039b7'
+			}
 		},
 		ohlc : {
-			width : 'auto'
+			width : 'auto',
+			style : {
+				'vector-effect' : 'non-scaling-stroke',
+				'stroke-width' : '1.5px',
+				'stroke' : '#0039b7'
+			}
 		},
 		candlestick : {
-			width : 'auto'
+			width : 'auto',
+			style : {
+				above : {
+					rect : {
+						'fill' : '#FFFFFF',
+						'stroke' : '#349834'
+					},
+					path : {
+						'stroke' : '#349834'
+					}
+				},
+				below : {
+					rect : {
+						'fill' : '#FF0000',
+						'stroke' : '#FF0000'
+					},
+					path : {
+						'stroke' : '#FF0000'
+					}
+				}
+			}
 		},
 		abovebelow : {
-			aStyle : {
-				'fill' : '#92BC65',
-				'opacity' : '.8',
-				'stroke' : '#65A125'
-			},
-			bStyle : {
-				'fill' : '#D86D72',
-				'opacity' : '.8',
-				'stroke' : '#CA3239'
+			style : {
+				above : {
+					'fill' : '#92BC65',
+					'opacity' : '.8',
+					'stroke' : '#65A125'
+				},
+				below : {
+					'fill' : '#D86D72',
+					'opacity' : '.8',
+					'stroke' : '#CA3239'
+				}
 			},
 			referValue : function (d) {
 				return d.close;
@@ -633,7 +663,7 @@ module.exports = function (container, opt) {
 			})
 			.defined(option.line.invalid || option.invalid);
 
-		var lineseries = _graph.append('g').attr('class', 'mstar-mkts-ui-plot-line-series').style(series.linestyle || option.line.style);
+		var lineseries = _graph.append('g').attr('class', 'mstar-mkts-ui-plot-line-series').style(getStyle('line', series));
 		lineseries.append('path').attr('d', line(series.data));
 
 		return lineseries;
@@ -650,7 +680,7 @@ module.exports = function (container, opt) {
 			})
 			.defined(option.area.invalid || option.invalid);
 
-		var target = _graph.append('g').attr('class', 'mstar-mkts-ui-plot-area-series').style(series.areastyle || option.area.style);
+		var target = _graph.append('g').attr('class', 'mstar-mkts-ui-plot-area-series').style(getStyle('area', series));
 		var clipId = series.clipId || _random + '#clip';
 
 		createClipPath(target, clipId);
@@ -684,6 +714,7 @@ module.exports = function (container, opt) {
 
 	var drawDots = function (series) {
 		var dot = dotSeries()
+			.style(getStyle('dot', series))
 			.tickSize(option.dot.radius)
 			.x(function (d) {
 				return _xScale(xValue(d));
@@ -700,6 +731,7 @@ module.exports = function (container, opt) {
 
 	var drawOHLC = function (series) {
 		var ohlc = ohlcSeries()
+			.style(getStyle('ohlc', series))
 			.tickSize(calculateTickSize(option.ohlc.width, series.data))
 			.xScale(_xScale)
 			.yScale(_yScale)
@@ -727,6 +759,7 @@ module.exports = function (container, opt) {
 
 	var drawCandlestick = function (series) {
 		var candlestick = candlestickSeries()
+			.style(getStyle('candlestick', series))
 			.tickSize(calculateTickSize(option.candlestick.width, series.data))
 			.xScale(_xScale)
 			.yScale(_yScale)
@@ -796,13 +829,13 @@ module.exports = function (container, opt) {
 		.attr('height', _height - yClipValue);
 
 		target.append('path')
-		.style(series.aboveStyle || option.abovebelow.aStyle)
+		.style(getStyle('abovebelow', series).above)
 		.attr('class', 'mstar-mkts-ui-plot-above-series')
 		.attr("clip-path", "url(#" + aboveClipId + ")")
 		.attr("d", abArea.y0(_height));
 
 		target.append('path')
-		.style(series.belowStyle || option.abovebelow.bStyle)
+		.style(getStyle('abovebelow', series).below)
 		.attr('class', 'mstar-mkts-ui-plot-below-series')
 		.attr("clip-path", "url(#" + belowClipId + ")")
 		.attr("d", abArea.y0(0));
@@ -898,6 +931,10 @@ module.exports = function (container, opt) {
 			return _seriesCache.highlight[index];
 		}
 		return _seriesCache.highlight;
+	};
+
+	var getStyle = function (graphType, series) {
+		return _.assignIn({}, option[graphType].style, (series.style || {})[graphType]);
 	};
 
 	construct();

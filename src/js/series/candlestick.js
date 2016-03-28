@@ -1,4 +1,5 @@
 var d3 = require("d3");
+var _ = require('lodash');
 module.exports = function () {
 	"use strict";
 	var xScale,
@@ -10,7 +11,11 @@ module.exports = function () {
 	yOValue,
 	yHValue,
 	yLValue,
-	yCValue;
+	yCValue,
+	style = {
+		above : {},
+		below : {}
+	};
 	var defined = function () {
 		return true;
 	};
@@ -19,10 +24,13 @@ module.exports = function () {
 		return yCValue(d) > yOValue(d);
 	};
 
-	var isDownDay = function (d) {
-		return !isUpDay(d);
+	var getStyle = function(element,isUp){
+		if(isUp){
+			return style.above[element];
+		}
+		return style.below[element];
 	};
-
+	
 	var line = d3.svg.line()
 		.x(function (d) {
 			return d.x;
@@ -30,8 +38,9 @@ module.exports = function () {
 			return d.y;
 		});
 
-	var highLowLines = function (bar) {
+	var highLowLines = function (bar, isUp) {
 		var paths = bar.append("path")
+			.style(getStyle('path', isUp))
 			.classed({
 				"mstar-mkts-ui-plot-high-low-line" : true
 			})
@@ -48,17 +57,18 @@ module.exports = function () {
 			});
 	};
 
-	var rectangles = function (bar) {
+	var rectangles = function (bar, isUp) {
 		var rect = bar.append('rect')
+			.style(getStyle('rect', isUp))
 			.attr("x", function (d) {
 				return xScale(xValue(d)) - tickSize / 2;
 			})
 			.attr("y", function (d) {
-				return isUpDay(d) ? yScale(yCValue(d)) : yScale(yOValue(d));
+				return isUp ? yScale(yCValue(d)) : yScale(yOValue(d));
 			})
 			.attr("width", tickSize)
 			.attr("height", function (d) {
-				return Math.max(0.5, isUpDay(d) ? (yScale(yOValue(d)) - yScale(yCValue(d))) : (yScale(yCValue(d)) - yScale(yOValue(d))));
+				return Math.max(0.5, isUp ? (yScale(yOValue(d)) - yScale(yCValue(d))) : (yScale(yCValue(d)) - yScale(yOValue(d))));
 			});
 	};
 
@@ -74,18 +84,20 @@ module.exports = function () {
 			var outerElem = d3.select(this).append('g').classed('mstar-mkts-ui-plot-candlestick-series', true);
 			var i = -1,
 			n = data.length,
-			d;
+			d,
+			isUp;
 			while (++i < n) {
 				if (defined.call(this, d = data[i], i)) {
+					isUp = isUpDay(d);
 					bar = outerElem.append('g').data([d])
 						.classed({
 							'mstar-mkts-ui-plot-bar' : true,
-							'mstar-mkts-ui-plot-up' : isUpDay,
-							'mstar-mkts-ui-plot-down' : isDownDay
+							'mstar-mkts-ui-plot-up' : isUp,
+							'mstar-mkts-ui-plot-down' : !isUp
 						});
 
-					highLowLines(bar);
-					rectangles(bar);
+					highLowLines(bar, isUp);
+					rectangles(bar, isUp);
 				}
 			}
 		});
@@ -166,6 +178,14 @@ module.exports = function () {
 			return yCValue;
 		}
 		yCValue = value;
+		return candlestick;
+	};
+	
+	candlestick.style = function (value) {
+		if (!arguments.length) {
+			return style;
+		}
+		_.assignIn(style, value);
 		return candlestick;
 	};
 

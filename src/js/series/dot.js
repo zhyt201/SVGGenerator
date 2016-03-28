@@ -1,8 +1,10 @@
 var d3 = require("d3");
+var _ = require('lodash');
 module.exports = function () {
 	'use strict';
 
 	var tickSize = 2;
+	var style = {};
 	var defined = function () {
 		return true;
 	};
@@ -25,6 +27,7 @@ module.exports = function () {
 			while (++i < n) {
 				if (defined.call(this, d = data[i], i)) {
 					dot = outerElem.append("circle")
+						.style(style)
 						.attr("r", tickSize)
 						.attr("cx", x(d))
 						.attr("cy", y(d));
@@ -62,6 +65,14 @@ module.exports = function () {
 			return defined;
 		}
 		defined = value;
+		return dot;
+	};
+	
+	dot.style = function (value) {
+		if (!arguments.length) {
+			return style;
+		}
+		_.assignIn(style, value);
 		return dot;
 	};
 
