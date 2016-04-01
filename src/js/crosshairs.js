@@ -42,7 +42,7 @@ module.exports = function () {
 		var root = selection.append('g').attr('class', 'mstar-mkts-ui-plot-crosshairs').attr('transform', _translate);
 		if (line.horizontal.show) {
 			_lineH = root.append('line')
-				.style(_.assignIn(line.horizontal.style, line.style))
+				.style(_.assignIn({}, line.style, line.horizontal.style))
 				.attr('class', 'mstar-mkts-ui-plot-corssharis mstar-mkts-ui-plot-horizontal')
 				.attr('x1', 0)
 				.attr('x2', width)
@@ -52,7 +52,7 @@ module.exports = function () {
 		}
 		if (line.vertical.show) {
 			_lineV = root.append("line")
-				.style(_.assignIn(line.vertical.style, line.style))
+				.style(_.assignIn({}, line.style, line.vertical.style))
 				.attr('class', 'mstar-mkts-ui-plot-crosshairs mstar-mkts-ui-plot-vertical')
 				.attr('x1', x)
 				.attr('x2', x)
@@ -144,14 +144,14 @@ module.exports = function () {
 		if (!arguments.length) {
 			return line;
 		}
-		_.assignIn(line, value);
+		_.merge(line, value);
 		return crosshairs;
 	};
 	crosshairs.circle = function (value) {
 		if (!arguments.length) {
 			return circle;
 		}
-		_.assignIn(circle, value);
+		_.merge(circle, value);
 		return crosshairs;
 	};
 	crosshairs.translate = function (value) {

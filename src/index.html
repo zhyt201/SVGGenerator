@@ -85,7 +85,17 @@
 				width : 1200,
 				height : 600,
 				crosshairs : {
-					show : true
+					line:{
+						horizontal:{
+							show : true,
+							style:{
+								'stroke' : '#CA3239'
+							}
+						},
+						vertical:{
+							show : true
+						}
+					}
 				}
 			}).init(seriesList);
 		};

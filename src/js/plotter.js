@@ -487,7 +487,7 @@ module.exports = function (container, opt) {
 	};
 
 	var createCrossHaris = function () {
-		if (option.crosshairs.show === true && !_corsshairs) {
+		if (isCrossHairsShow(option.crosshairs) && !_corsshairs) {
 			_corsshairs = crosshairs()
 				.width(_width)
 				.height(_height)
@@ -963,6 +963,10 @@ module.exports = function (container, opt) {
 
 	var getStyle = function (graphType, series) {
 		return _.assignIn({}, option[graphType].style, (series.style || {})[graphType]);
+	};
+
+	var isCrossHairsShow = function (crosshairs) {
+		return crosshairs.line.horizontal.show === true || crosshairs.line.vertical.show === true || crosshairs.circle.show === true;
 	};
 
 	construct();
