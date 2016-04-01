@@ -32,7 +32,7 @@
 		function init(data){
 			var seriesList = [{
 					'data' : data.Price.data,
-					'graphType' : 'candlestick',
+					'graphType' : 'mountain',
 					'tickerObject' : data.tickerObject,
 					'spos' : data.Price.spos,
 					'epos' : data.Price.epos,
@@ -83,7 +83,10 @@
 			];
 			var html = svggenerator($('.container'), {
 				width : 1200,
-				height : 600
+				height : 600,
+				crosshairs : {
+					show : true
+				}
 			}).init(seriesList);
 		};
 		$.getJSON('test/mock/MSFT_1D.json').done(init);

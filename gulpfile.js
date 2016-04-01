@@ -107,4 +107,4 @@ gulp.task('watch', function () {
 	gulp.watch('src/**/*.*', ['reload']);
 });
 
-gulp.task('preview', ['open', 'watch']);
+gulp.task('default', ['open', 'watch']);

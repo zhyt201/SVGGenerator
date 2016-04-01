@@ -29,7 +29,8 @@ module.exports = function (container, opt) {
 			styleFun : function (elem) {
 				elem.selectAll("text").style("text-anchor", "start").attr("x", 1).attr("y", 1);
 				return elem;
-			}
+			},
+			outerTickSize : 14
 		},
 		yaxis : {
 			show : true,
@@ -61,8 +62,8 @@ module.exports = function (container, opt) {
 			width : 50,
 			showLastlegend : true,
 			styleFun : function (elem) {
-				var orient = elem.attr('orient'),
-				align = elem.attr('align');
+				var orient = elem.attr('data-orient'),
+				align = elem.attr('data-align');
 				var opt = {
 					orient : orient,
 					align : align
@@ -103,10 +104,21 @@ module.exports = function (container, opt) {
 			}
 		},
 		crosshairs : {
-			show : true,
+			line : {
+				horizontal : {
+					show : false,
+					style : {}
+				},
+				vertical : {
+					show : false,
+					style : {}
+				},
+				style : {}
+			},
 			circle : {
 				show : false,
-				radius : 5
+				radius : 5,
+				style : {}
 			},
 			traceMouse : false
 		},
@@ -290,11 +302,26 @@ module.exports = function (container, opt) {
 			_svg.selectAll('.mstar-mkts-ui-plot-gridlines-g').call(_gridlines);
 		}
 		if (_xaxis) {
-			_svg.selectAll('.mstar-mkts-ui-plot-x').call(_xaxis).call(option.xaxis.styleFun);
+			var _xElem = _svg.selectAll('.mstar-mkts-ui-plot-x');
+			_xElem.call(_xaxis).call(option.xaxis.styleFun);
+			_xElem.select('.domain').style({
+				'fill' : 'none',
+				'display' : 'none'
+			});
+			_xElem.selectAll('line').style({
+				'display' : 'none'
+			});
 		}
 		if (_yaxis) {
 			var _yElem = _svg.selectAll('.mstar-mkts-ui-plot-y');
 			_yElem.call(_yaxis).call(option.yaxis.styleFun);
+			_yElem.select('.domain').style({
+				'fill' : 'none',
+				'display' : 'none'
+			});
+			_yElem.selectAll('line').style({
+				'display' : 'none'
+			});
 			processTicks(_yElem);
 		}
 
@@ -419,8 +446,8 @@ module.exports = function (container, opt) {
 			_xaxis = createAxis(xaxisOpt, _xScale);
 			var xg = _svg.append('g')
 				.attr('class', 'mstar-mkts-ui-plot-x mstar-mkts-ui-plot-axis')
-				.attr('orient', xaxisOpt.orient)
-				.attr('align', xaxisOpt.align);
+				.attr('data-orient', xaxisOpt.orient)
+				.attr('data-align', xaxisOpt.align);
 			if (xaxisOpt.align === 'bottom') {
 				translate = [translateXY.x, _height + xaxisOpt.marginTop];
 			} else if (xaxisOpt.align === 'top') {
@@ -432,8 +459,8 @@ module.exports = function (container, opt) {
 			_yaxis = createAxis(yaxisOpt, _yScale);
 			var yg = _svg.append('g')
 				.attr('class', 'mstar-mkts-ui-plot-y mstar-mkts-ui-plot-axis')
-				.attr('orient', yaxisOpt.orient)
-				.attr('align', yaxisOpt.align);
+				.attr('data-orient', yaxisOpt.orient)
+				.attr('data-align', yaxisOpt.align);
 			if (yaxisOpt.align === 'right') {
 				translate = [_width, 0];
 			} else if (yaxisOpt.align === 'left') {
@@ -464,6 +491,7 @@ module.exports = function (container, opt) {
 			_corsshairs = crosshairs()
 				.width(_width)
 				.height(_height)
+				.line(option.crosshairs.line)
 				.circle(option.crosshairs.circle)
 				.translate(getTranslate());
 			_svg.call(_corsshairs);
@@ -614,7 +642,7 @@ module.exports = function (container, opt) {
 
 	var createAxis = function (opt, scale) {
 		var axis = d3.svg.axis().scale(scale).orient(opt.orient);
-		var array = ['ticks', 'tickSize', 'tickPadding', 'tickValues', 'tickFormat'];
+		var array = ['ticks', 'tickSize', 'innerTickSize', 'outerTickSize', 'tickPadding', 'tickValues', 'tickFormat'];
 		for (var i = 0, l = array.length, a; i < l; i++) {
 			a = array[i];
 			if (opt[a] && axis[a]) {
