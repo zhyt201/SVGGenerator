@@ -255,7 +255,7 @@ module.exports = function (container, opt) {
 
 	var construct = function () {
 		_container = d3.select(container.jquery ? container[0] : container);
-		_.assignIn(option, opt);
+		_.merge(option, opt);
 		//create SVG
 		createSVG();
 		//create scale
