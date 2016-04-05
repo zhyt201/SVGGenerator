@@ -32,71 +32,71 @@
 		function init(data){
 			var seriesList = [{
 					'data' : data.Price.data,
-					'graphType' : 'mountain',
+					'graphType' : 'ohlc',
 					'tickerObject' : data.tickerObject,
 					'spos' : data.Price.spos,
 					'epos' : data.Price.epos,
-					'style' : {
-						'line':{
-							'stroke' : '#339bb6'
-						},
-						'area':{
-							'fill' : '#339bb6'
-						},
-						'ohlc' : {
-							'stroke' : '#339bb6'
-						},
-						'candlestick' : {
-							'above' : {
-								'rect' : {
-									'fill' : '#FFFFFF',
-									'stroke' : '#349834'
-								},
-								'path' : {
-									'stroke' : '#349834'
-								}
-							},
-							'below' : {
-								'rect' : {
-									'fill' : '#FF0000',
-									'stroke' : '#FF0000'
-								},
-								'path' : {
-									'stroke' : '#FF0000'
-								}
-							}
-						},
-						'abovebelow' : {
-							'above' : {
-								'fill' : '#92BC65',
-								'opacity' : '.8',
-								'stroke' : '#65A125'
-							},
-							'below' : {
-								'fill' : '#D86D72',
-								'opacity' : '.8',
-								'stroke' : '#CA3239'
-							}
-						}
-					}
+					'color' : '#00bbcc'
 				}
 			];
 			var html = svggenerator($('.container'), {
-				width : 1200,
-				height : 600,
-				crosshairs : {
-					line:{
-						horizontal:{
-							show : true,
-							style:{
+				'width' : 1200,
+				'height' : 600,
+				'crosshairs' : {
+					'line':{
+						'horizontal':{
+							'show' : true,
+							'style':{
 								'stroke' : '#CA3239'
 							}
 						},
-						vertical:{
-							show : true
+						'vertical':{
+							'show' : true
+						}
+					},
+					'traceMouse' : true
+				}
+				/*'line':{
+					'stroke' : '#339bb6'
+				},
+				'area':{
+					'fill' : '#339bb6'
+				},
+				'ohlc' : {
+					'stroke' : '#339bb6'
+				},
+				'candlestick' : {
+					'above' : {
+						'rect' : {
+							'fill' : '#FFFFFF',
+							'stroke' : '#349834'
+						},
+						'path' : {
+							'stroke' : '#349834'
+						}
+					},
+					'below' : {
+						'rect' : {
+							'fill' : '#FF0000',
+							'stroke' : '#FF0000'
+						},
+						'path' : {
+							'stroke' : '#FF0000'
 						}
 					}
-				}
+				},
+				'abovebelow' : {
+					'above' : {
+						'fill' : '#92BC65',
+						'opacity' : '.8',
+						'stroke' : '#65A125'
+					},
+					'below' : {
+						'fill' : '#D86D72',
+						'opacity' : '.8',
+						'stroke' : '#CA3239'
+					}
+				}*/
 			}).init(seriesList);
 		};
 		$.getJSON('test/mock/MSFT_1D.json').done(init);

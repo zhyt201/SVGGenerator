@@ -81,7 +81,6 @@ module.exports = function (container, opt) {
 				style : {
 					'fill' : 'none',
 					'opacity' : '0.8',
-					'stroke' : '#0039b7',
 					'stroke-width' : '2px'
 				}
 			},
@@ -331,10 +330,12 @@ module.exports = function (container, opt) {
 		var ymax = Number.NEGATIVE_INFINITY,
 		ymin = Number.POSITIVE_INFINITY;
 		dataList.forEach(function (series) {
+			series.graphType = _.lowerCase(series.graphType ? series.graphType : 'line');
+			series.isHLC = series.graphType === 'hlc' ? true : false;
+			series.graphType = _.endsWith(series.graphType, 'hlc') ? 'ohlc' : series.graphType;
 			var data = series.data;
-			var graphType = series.graphType || 'line';
-			var isOHLC = graphType === 'ohlc' || graphType === 'candlestick';
-			var invalid = option[graphType].invalid || option.invalid;
+			var isOHLC = series.graphType === 'ohlc' || series.graphType === 'candlestick';
+			var invalid = option[series.graphType].invalid || option.invalid;
 			data.forEach(function (d) {
 				var yminTemp = yValue(d, isOHLC ? 'min' : ''),
 				ymaxTemp = yValue(d, isOHLC ? 'max' : '');
@@ -759,6 +760,7 @@ module.exports = function (container, opt) {
 
 	var drawOHLC = function (series) {
 		var ohlc = ohlcSeries()
+			.isHLC(series.isHLC)
 			.style(getStyle('ohlc', series))
 			.tickSize(calculateTickSize(option.ohlc.width, series.data))
 			.xScale(_xScale)
@@ -962,7 +964,22 @@ module.exports = function (container, opt) {
 	};
 
 	var getStyle = function (graphType, series) {
-		return _.assignIn({}, option[graphType].style, (series.style || {})[graphType]);
+		var style = option[graphType].style;
+		var color = series.color;
+		if (color) {
+			switch (graphType) {
+			case 'line':
+			case 'ohlc':
+				style.stroke = color;
+				break;
+			case 'area':
+			case 'dot':
+				style.fill = color;
+				break;
+
+			}
+		}
+		return style; //_.assignIn({}, option[graphType].style, (series.style || {})[graphType]);
 	};
 
 	var isCrossHairsShow = function (crosshairs) {
