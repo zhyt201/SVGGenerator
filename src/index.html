@@ -36,49 +36,7 @@
 					'tickerObject' : data.tickerObject,
 					'spos' : data.Price.spos,
 					'epos' : data.Price.epos,
-					'style' : {
-						'line':{
-							'stroke' : '#339bb6'
-						},
-						'area':{
-							'fill' : '#339bb6'
-						},
-						'ohlc' : {
-							'stroke' : '#339bb6'
-						},
-						'candlestick' : {
-							'above' : {
-								'rect' : {
-									'fill' : '#FFFFFF',
-									'stroke' : '#349834'
-								},
-								'path' : {
-									'stroke' : '#349834'
-								}
-							},
-							'below' : {
-								'rect' : {
-									'fill' : '#FF0000',
-									'stroke' : '#FF0000'
-								},
-								'path' : {
-									'stroke' : '#FF0000'
-								}
-							}
-						},
-						'abovebelow' : {
-							'above' : {
-								'fill' : '#92BC65',
-								'opacity' : '.8',
-								'stroke' : '#65A125'
-							},
-							'below' : {
-								'fill' : '#D86D72',
-								'opacity' : '.8',
-								'stroke' : '#CA3239'
-							}
-						}
-					}
+					'color' : '#339bb6'
 				}
 			];
 			var html = svggenerator($('.container'), {
